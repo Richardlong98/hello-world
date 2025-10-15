@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: hello-world
-          image: docker.io/your-username/hello-world:latest  # thay bằng image bạn build
+          image: docker.io/richardlong98/hello-world:latest  # image đúng từ Docker Hub của bạn
           ports:
             - containerPort: 8080
           env:
