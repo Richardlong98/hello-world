@@ -1,7 +1,8 @@
 # Dockerfile
-FROM node:20-alpine  # hoặc python, tùy app
+FROM node:20-alpine
+
 WORKDIR /app
 COPY . .
-RUN npm install      # nếu node
-CMD ["node", "index.js"]  # thay bằng file chính
+RUN npm install
+CMD ["node", "index.js"]
 EXPOSE 8080
