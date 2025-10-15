@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+  namespace: production
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+        - name: hello-world
+          image: docker.io/your-username/hello-world:latest  # thay bằng image bạn build
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: hello-world-config
+                  key: APP_MESSAGE
+          volumeMounts:
+            - name: hello-world-storage
+              mountPath: /data
+      volumes:
+        - name: hello-world-storage
+          persistentVolumeClaim:
+            claimName: hello-world-pvc
