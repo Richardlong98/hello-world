@@ -1,18 +1,31 @@
 # --- Dockerfile ---
-FROM node:20
 
-# Tạo thư mục làm việc trong container
+# Giai đoạn build (dùng Node để build React)
+FROM node:20-alpine AS build
+
+# Tạo thư mục làm việc
 WORKDIR /app
 
-# Copy package.json và cài dependencies
+# Copy file package.json và package-lock.json vào container
 COPY package*.json ./
-RUN npm install --omit=dev
 
-# Copy toàn bộ code vào container
+# Cài dependencies
+RUN npm install
+
+# Copy toàn bộ mã nguồn vào container
 COPY . .
 
-# Expose cổng app chạy (thường 8080)
-EXPOSE 8080
+# Build app ra thư mục /app/build
+RUN npm run build
 
-# Chạy app thông qua npm start
-CMD ["npm", "start"]
+# Giai đoạn run (dùng Nginx để serve app)
+FROM nginx:alpine
+
+# Copy build đã tạo sang Nginx để chạy
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Expose cổng 80 để Kubernetes có thể truy cập
+EXPOSE 80
+
+# Lệnh mặc định để chạy Nginx
+CMD ["nginx", "-g", "daemon off;"]
