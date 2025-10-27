@@ -1,40 +1,40 @@
 pipeline {
-  agent any
+    agent { label 'long-agent' }
 
-  environment {
-    REGISTRY = 'docker.io'
-    IMAGE_NAME = 'hello-world'
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        git branch: 'r1', url: 'https://github.com/Richardlong98/hello-world.git'
-      }
+    environment {
+        REGISTRY = 'docker.io'
+        IMAGE_NAME = 'hello-world'
     }
 
-    stage('Build Docker Image') {
-      steps {
-        script {
-          dockerImage = docker.build("${IMAGE_NAME}:latest")
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'r1', url: 'https://github.com/Richardlong98/hello-world.git'
+            }
         }
-      }
-    }
 
-    stage('Push to DockerHub') {
-      steps {
-        script {
-          docker.withRegistry("https://${REGISTRY}", "dockerhub-cred") {
-            dockerImage.push()
-          }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dockerImage = docker.build("${IMAGE_NAME}:latest")
+                }
+            }
         }
-      }
-    }
 
-    stage('Deploy to Kubernetes') {
-      steps {
-        sh 'kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml'
-      }
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry("https://${REGISTRY}", "dockerhub-cred") {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml'
+            }
+        }
     }
-  }
 }
