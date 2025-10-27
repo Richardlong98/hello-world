@@ -1,19 +1,16 @@
-# --- Dockerfile (React build + serve) ---
-
-# 1️⃣ Giai đoạn build React app
-FROM node:20 AS build
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-# 2️⃣ Giai đoạn chạy (dùng nginx)
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Nginx tự động chạy
+{
+  "name": "hello-world",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-scripts": "5.0.1"
+  }
+}
